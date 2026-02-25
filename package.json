@@ -1,7 +1,7 @@
 {
   "name": "logic-auto",
   "version": "0.0.1",
-  "description": "",
+  "description": "LogicManifest & dependency manifest utilities for Logic automation tooling",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
