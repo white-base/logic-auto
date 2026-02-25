@@ -1,0 +1,31 @@
+{
+  "packageName": "@logic-auto/sample-a",
+  "version": "1.0.0",
+  "category": "ui.hero",
+  "kind": "module",
+  "layer": "ui",
+  "tags": ["sample", "express", "hero"],
+  "uiDeps": {},
+  "dbDepsMap": {},
+  "contracts": {
+    "expects": [
+      {
+        "key": "theme",
+        "channel": "config",
+        "description": "Theme token that styles the hero headline"
+      }
+    ],
+    "provides": [
+      {
+        "key": "hero",
+        "channel": "route",
+        "description": "GET /modules/sample-a with hero content"
+      }
+    ]
+  },
+  "businessDomain": "marketing",
+  "implementation": "./index.js",
+  "renderMode": "ssr",
+  "family": "sample-ui",
+  "theme": "default"
+}

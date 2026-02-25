@@ -1,0 +1,8 @@
+{
+  "name": "@logic-auto/sample-a",
+  "version": "1.0.0",
+  "description": "Sample hero UI module for the Express + EJS demo harness.",
+  "type": "module",
+  "main": "index.js",
+  "license": "MIT"
+}

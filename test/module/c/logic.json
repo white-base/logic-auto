@@ -1,0 +1,31 @@
+{
+  "packageName": "@logic-auto/sample-c",
+  "version": "1.0.0",
+  "category": "ui.onboarding",
+  "kind": "module",
+  "layer": "ui",
+  "tags": ["sample", "checklist", "onboarding"],
+  "uiDeps": {},
+  "dbDepsMap": {},
+  "contracts": {
+    "expects": [
+      {
+        "key": "steps",
+        "channel": "config",
+        "description": "List of onboarding steps"
+      }
+    ],
+    "provides": [
+      {
+        "key": "onboarding-checklist",
+        "channel": "route",
+        "description": "GET /modules/sample-c with checklist"
+      }
+    ]
+  },
+  "businessDomain": "success",
+  "implementation": "./index.js",
+  "renderMode": "ssr",
+  "family": "sample-ui",
+  "theme": "neutral"
+}

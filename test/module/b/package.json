@@ -1,0 +1,8 @@
+{
+  "name": "@logic-auto/sample-b",
+  "version": "1.0.0",
+  "description": "Sample analytics UI module for listing cards.",
+  "type": "module",
+  "main": "index.js",
+  "license": "MIT"
+}

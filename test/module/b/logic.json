@@ -1,0 +1,31 @@
+{
+  "packageName": "@logic-auto/sample-b",
+  "version": "1.0.0",
+  "category": "ui.analytics",
+  "kind": "module",
+  "layer": "ui",
+  "tags": ["sample", "analytics", "cards"],
+  "uiDeps": {},
+  "dbDepsMap": {},
+  "contracts": {
+    "expects": [
+      {
+        "key": "dataset",
+        "channel": "api",
+        "description": "Dataset identifier to visualize"
+      }
+    ],
+    "provides": [
+      {
+        "key": "analytics-cards",
+        "channel": "route",
+        "description": "GET /modules/sample-b with cards"
+      }
+    ]
+  },
+  "businessDomain": "analytics",
+  "implementation": "./index.js",
+  "renderMode": "ssr",
+  "family": "sample-ui",
+  "theme": "dark"
+}

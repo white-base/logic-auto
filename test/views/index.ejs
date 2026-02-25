@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Logic Manifest Express Demo</title>
+    <style>
+      body { font-family: 'Inter', system-ui, sans-serif; margin: 2rem; background: #fdfdfd; }
+      header { margin-bottom: 2rem; }
+      ul { list-style: none; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+      li { border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; }
+      a { font-weight: 600; text-decoration: none; color: #2563eb; }
+      .tag { display: inline-block; background: #e0f2fe; color: #0369a1; border-radius: 9999px; padding: 0.1rem 0.6rem; margin-right: 0.25rem; font-size: 0.8rem; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>LogicManifest Express + EJS Sample</h1>
+      <p>Each module below comes from <code>test/module/&lt;name&gt;</code> and is also declared in <code>test/logic.json</code>.</p>
+    </header>
+    <ul>
+      <% modules.forEach(function(module) { %>
+        <li>
+          <h2><a href="<%= module.routePath %>"><%= module.title %></a></h2>
+          <p><%= module.description %></p>
+          <div>
+            <% (module.tags || []).forEach(function(tag) { %>
+              <span class="tag"><%= tag %></span>
+            <% }) %>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  </body>
+</html>

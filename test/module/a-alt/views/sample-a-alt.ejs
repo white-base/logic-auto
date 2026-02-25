@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= title %></title>
+    <style>
+      :root { color-scheme: dark; }
+      body { font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; margin: 2rem; background: #050505; color: #f5f5f5; }
+      a { color: #38bdf8; }
+      article.docs { padding: 1.5rem; border: 1px solid #27272a; border-radius: 1rem; background: #18181b; margin-bottom: 2rem; }
+      section.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+      article.card { border: 1px solid #27272a; border-radius: 1rem; padding: 1.25rem; background: #111; box-shadow: 0 20px 50px rgba(0,0,0,0.35); }
+      article.card h2 { margin-top: 0; font-size: 1.2rem; }
+      article.card .package { font-size: 0.85rem; color: #9ca3af; }
+      article.card .tags { margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.35rem; }
+      article.card .tags span { background: #1f2937; border-radius: 9999px; padding: 0.15rem 0.65rem; font-size: 0.75rem; color: #d1d5db; }
+    </style>
+  </head>
+  <body>
+    <a href="/">&larr; Back</a>
+    <h1><%= title %></h1>
+    <p><%= description %></p>
+    <article class="docs">
+      <%- html %>
+    </article>
+    <section>
+      <h2>Dependency Modules</h2>
+      <p>이 모듈은 아래 UI 의존성(@logic-auto/sample-b, @logic-auto/sample-c)을 로드해 카드 형태로 노출합니다.</p>
+    </section>
+    <section class="cards">
+      <% dependencyCards.forEach(function(card) { %>
+        <article class="card">
+          <h2><a href="<%= card.routePath %>"><%= card.title %></a></h2>
+          <p class="package"><code><%= card.packageName %></code></p>
+          <p><%= card.description %></p>
+          <div class="tags">
+            <% card.tags.forEach(function(tag) { %>
+              <span><%= tag %></span>
+            <% }) %>
+          </div>
+        </article>
+      <% }) %>
+    </section>
+  </body>
+</html>

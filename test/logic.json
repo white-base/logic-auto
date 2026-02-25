@@ -1,0 +1,28 @@
+{
+  "packageName": "@logic-auto/sample-app",
+  "version": "1.0.0",
+  "category": "ui.bundle",
+  "kind": "bundle",
+  "layer": "ui",
+  "dbType": null,
+  "tags": ["express", "ejs", "demo"],
+  "uiDeps": {
+    "@logic-auto/sample-a": "1.0.0",
+    "@logic-auto/sample-b": "1.0.0",
+    "@logic-auto/sample-c": "1.0.0",
+    "@logic-auto/sample-a-alt": "1.0.0"
+  },
+  "dbDepsMap": {},
+  "contracts": {
+    "expects": [],
+    "provides": [
+      {
+        "key": "ui-bundle",
+        "channel": "bundle",
+        "description": "Express + EJS harness powering sample modules"
+      }
+    ]
+  },
+  "platform": "express",
+  "structure": "express-ejs-demo"
+}

@@ -1,0 +1,6 @@
+.gitconfig
+.DS_Store
+node_modules/
+coverage/
+docs/
+dist/

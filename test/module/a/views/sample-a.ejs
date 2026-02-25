@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= title %></title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 2rem; }
+      header { border-bottom: 2px solid #111; margin-bottom: 1rem; }
+      .tags span { background: #f2f2f2; border-radius: 4px; padding: 0.1rem 0.4rem; margin-right: 0.3rem; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <p><small>Route: <code><%= routePath %></code></small></p>
+      <h1><%= title %></h1>
+      <p><%= description %></p>
+    </header>
+    <section>
+      <h2>Manifest Snapshot</h2>
+      <dl>
+        <dt>packageName</dt>
+        <dd><code><%= manifest.packageName %></code></dd>
+        <dt>version</dt>
+        <dd><%= manifest.version %></dd>
+        <dt>kind</dt>
+        <dd><%= manifest.kind %> (<%= manifest.layer %>)</dd>
+      </dl>
+      <div class="tags">
+        <% (manifest.tags || []).forEach(function(tag) { %>
+          <span><%= tag %></span>
+        <% }) %>
+      </div>
+    </section>
+  </body>
+</html>

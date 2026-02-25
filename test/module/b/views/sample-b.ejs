@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= title %></title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 2rem; background: #0f172a; color: #e2e8f0; }
+      h1 { color: #fbbf24; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+      .card { background: #1e293b; padding: 1rem; border-radius: 0.75rem; }
+      .trend-up { color: #34d399; }
+      .trend-down { color: #f87171; }
+      a { color: #93c5fd; }
+    </style>
+  </head>
+  <body>
+    <a href="/">&larr; Back</a>
+    <h1><%= title %></h1>
+    <p><%= description %></p>
+    <section class="grid">
+      <% cards.forEach(function(card) { %>
+        <article class="card">
+          <h2><%= card.title %></h2>
+          <p><strong><%= card.value %></strong></p>
+          <p class="trend-<%= card.trend %>">Trend: <%= card.trend %></p>
+        </article>
+      <% }) %>
+    </section>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "@logic-auto/sample-c",
+  "version": "1.0.0",
+  "description": "Sample onboarding UI module showing a checklist.",
+  "type": "module",
+  "main": "index.js",
+  "license": "MIT"
+}

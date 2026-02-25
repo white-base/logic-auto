@@ -1,0 +1,12 @@
+{
+  "name": "@logic-auto/sample-a-alt",
+  "version": "1.0.0",
+  "description": "Companion module used as the alternate 'a' sample.",
+  "type": "module",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@logic-auto/sample-b": "file:../b",
+    "@logic-auto/sample-c": "file:../c"
+  }
+}

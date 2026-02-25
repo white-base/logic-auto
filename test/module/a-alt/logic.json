@@ -1,0 +1,34 @@
+{
+  "packageName": "@logic-auto/sample-a-alt",
+  "version": "1.0.0",
+  "category": "ui.docs",
+  "kind": "module",
+  "layer": "ui",
+  "tags": ["sample", "collector", "docs"],
+  "uiDeps": {
+    "@logic-auto/sample-b": "1.0.0",
+    "@logic-auto/sample-c": "1.0.0"
+  },
+  "dbDepsMap": {},
+  "contracts": {
+    "expects": [
+      {
+        "key": "markdown",
+        "channel": "content",
+        "description": "Markdown blob to render"
+      }
+    ],
+    "provides": [
+      {
+        "key": "docs-pane",
+        "channel": "route",
+        "description": "GET /modules/sample-a-alt with docs"
+      }
+    ]
+  },
+  "businessDomain": "documentation",
+  "implementation": "./index.js",
+  "renderMode": "ssr",
+  "family": "sample-ui",
+  "theme": "contrast"
+}
