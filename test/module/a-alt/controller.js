@@ -10,7 +10,7 @@ const markdownSource = `# Dependency Showcase
 This module demonstrates how a LogicManifest-powered UI component can consume its \`uiDeps\`
 collection, hydrate dependency manifests, and surface their metadata inside a single EJS view.`;
 
-const { registerRoutes, meta } = createUIModule({
+const { buildRouter, meta } = createUIModule({
   slug: 'sample-a-alt',
   title: moduleTitle,
   description: moduleDescription,
@@ -48,4 +48,5 @@ async function collectDependencyCards(lm) {
   return cards;
 }
 
-export { registerRoutes, meta };
+export const createRouter = (manifest) => buildRouter(manifest);
+export { meta };

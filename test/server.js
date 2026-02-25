@@ -31,8 +31,21 @@ async function bootstrap() {
     const moduleViews = path.join(path.dirname(absImplementation), 'views');
     viewRoots.push(moduleViews);
     const exportsObject = await manifest.getExports();
-    if (typeof exportsObject.registerRoutes === 'function') {
-      exportsObject.registerRoutes(app, manifest);
+    const createRouter =
+      typeof exportsObject.createRouter === 'function'
+        ? exportsObject.createRouter
+        : typeof exportsObject.buildRouter === 'function'
+          ? exportsObject.buildRouter
+          : null;
+    if (createRouter) {
+      const router = createRouter(manifest);
+      if (router) {
+        app.use('/modules', router);
+      } else {
+        console.warn(`Router factory for ${manifest.packageName} returned nothing.`);
+      }
+    } else {
+      console.warn(`No router factory found for ${manifest.packageName}.`);
     }
     moduleSummaries.push({
       slug,

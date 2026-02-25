@@ -3,7 +3,7 @@ import { createUIModule } from '../../lib/ui-module.js';
 const moduleTitle = 'Sample Module B — Analytics Cards';
 const moduleDescription = 'Renders a grid of analytics cards powered by LogicManifest metadata.';
 
-const { registerRoutes, meta } = createUIModule({
+const { buildRouter, meta } = createUIModule({
   slug: 'sample-b',
   title: moduleTitle,
   description: moduleDescription,
@@ -16,4 +16,5 @@ const { registerRoutes, meta } = createUIModule({
   }),
 });
 
-export { registerRoutes, meta };
+export const createRouter = (manifest) => buildRouter(manifest);
+export { meta };

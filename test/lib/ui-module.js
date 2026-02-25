@@ -1,3 +1,5 @@
+import express from 'express';
+
 export function createUIModule(options = {}) {
   const {
     slug,
@@ -14,8 +16,11 @@ export function createUIModule(options = {}) {
   const routePath = `/modules/${slug}`;
   const meta = { slug, routePath, viewName: view, title, description };
 
-  const registerRoutes = (app, manifest) => {
-    app.get(routePath, async (req, res, next) => {
+  const buildRouter = (manifest) => {
+    const router = express.Router();
+    // router는 app.use('/modules', router) 형태로 마운트된다고 가정하며,
+    // 각 모듈은 /modules/<slug> 경로를 자체적으로 등록한다.
+    router.get(`/${slug}`, async (req, res, next) => {
       try {
         const manifestJSON = manifestToJSON(manifest);
         const additions = await Promise.resolve(model({ req, manifest, manifestJSON }));
@@ -30,9 +35,10 @@ export function createUIModule(options = {}) {
         next(error);
       }
     });
+    return router;
   };
 
-  return { meta, registerRoutes };
+  return { meta, buildRouter };
 }
 
 export function manifestToJSON(manifest) {

@@ -9,11 +9,12 @@ const checklistSteps = [
   'Render the module-specific EJS view',
 ];
 
-const { registerRoutes, meta } = createUIModule({
+const { buildRouter, meta } = createUIModule({
   slug: 'sample-c',
   title: moduleTitle,
   description: moduleDescription,
   model: () => ({ steps: checklistSteps }),
 });
 
-export { registerRoutes, meta };
+export const createRouter = (manifest) => buildRouter(manifest);
+export { meta };
