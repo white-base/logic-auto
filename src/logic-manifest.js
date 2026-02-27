@@ -3,12 +3,14 @@ import { readFileSync, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
+import { SQLContext } from 'logic-sql-entity';
 
 const esmRequire = createRequire(import.meta.url);
 
 const LOGIC_JSON_FILENAME = 'logic.json';
 const manifestInstancesByPackage = new Map();
 const manifestInstancesByPath = new Map();
+const DEFAULT_RESOLVE_FLAGS = Object.freeze({ includeUI: true, includeDB: true });
 
 const KIND_VALUES = new Set(['module', 'bundle']);
 const LAYER_VALUES = new Set(['ui', 'db']);
@@ -66,6 +68,8 @@ export class LogicManifest {
     this.theme = definition.theme ?? null;
     this.entry = definition.entry ?? this.implementation ?? this.structure ?? this.platform ?? null;
     this._uiDepSpecs = normalizeDependencyMap(definition.uiDeps);
+    this._dbDepDefinitions = isPlainObject(definition.dbDepsMap) ? definition.dbDepsMap : {};
+    this.dbContext = SQLContext;
 
     this._definition = definition;
     this._context = freezeContext(context);
@@ -76,8 +80,9 @@ export class LogicManifest {
     this._packageJsonError = null;
     this._packageJsonPath = path.join(this.baseDir, 'package.json');
 
-    this.uiDepsMap = this._buildDependencyCollection(this._uiDepSpecs, 'ui');
-    this.dbDepsMap = this._buildChildCollection(definition.dbDepsMap, 'db');
+    this.uiDepsMap = new PropertyCollection();
+    this.dbDepsMap = new PropertyCollection();
+    this._resolvedDependencies = { ui: false, db: false };
   }
 
   get baseDir() {
@@ -152,6 +157,65 @@ export class LogicManifest {
     }
 
     return manifest;
+  }
+
+  static async load(manifestPathInputOrOptions, maybeResolveOptions = DEFAULT_RESOLVE_FLAGS) {
+    let manifestPathInput = manifestPathInputOrOptions;
+    let resolveOptions = maybeResolveOptions;
+    if (
+      typeof manifestPathInputOrOptions === 'object' &&
+      manifestPathInputOrOptions !== null &&
+      !Array.isArray(manifestPathInputOrOptions)
+    ) {
+      resolveOptions = manifestPathInputOrOptions;
+      manifestPathInput = undefined;
+    }
+
+    const manifest = LogicManifest.getInstance(manifestPathInput);
+    const flags = normalizeResolveOptions(resolveOptions, DEFAULT_RESOLVE_FLAGS);
+    await manifest.resolveDeps(flags);
+    return manifest;
+  }
+
+  async resolveDeps(options = {}) {
+    const flags = normalizeResolveOptions(options);
+    const tasks = [];
+    if (flags.includeUI) {
+      tasks.push(this._resolveUIDependencies(flags));
+    }
+    if (flags.includeDB) {
+      tasks.push(this._resolveDBDependencies(flags));
+    }
+    await Promise.all(tasks);
+    return this;
+  }
+
+  async _resolveUIDependencies(flags) {
+    if (this._resolvedDependencies.ui) {
+      return;
+    }
+    const collection = this._buildDependencyCollection(this._uiDepSpecs, 'ui');
+    syncPropertyCollection(this.uiDepsMap, collection);
+    this._resolvedDependencies.ui = true;
+    const childTasks = [];
+    for (const childManifest of this.uiDepsMap.values()) {
+      childTasks.push(childManifest.resolveDeps(flags));
+    }
+    await Promise.all(childTasks);
+  }
+
+  async _resolveDBDependencies(flags) {
+    if (this._resolvedDependencies.db) {
+      return;
+    }
+    const collection = this._buildChildCollection(this._dbDepDefinitions, 'db');
+    syncPropertyCollection(this.dbDepsMap, collection);
+    this._resolvedDependencies.db = true;
+    const childTasks = [];
+    for (const childManifest of this.dbDepsMap.values()) {
+      childTasks.push(childManifest.resolveDeps(flags));
+    }
+    await Promise.all(childTasks);
   }
 
   findManifest(packageName) {
@@ -433,6 +497,7 @@ export class ManifestLoader {
       lineage: [],
       parent: null,
     });
+    await this._cache.resolveDeps(DEFAULT_RESOLVE_FLAGS);
     return this._cache;
   }
 
@@ -471,6 +536,22 @@ export async function loadManifest(options = {}) {
   }
 
   return sharedLoader.load(false);
+}
+
+function normalizeResolveOptions(options = {}, defaults = { includeUI: false, includeDB: false }) {
+  const normalizedDefaults = defaults ?? {};
+  return {
+    includeUI: options.includeUI ?? normalizedDefaults.includeUI ?? false,
+    includeDB: options.includeDB ?? normalizedDefaults.includeDB ?? false,
+  };
+}
+
+function syncPropertyCollection(target, source) {
+  target.clear();
+  for (const [key, value] of source.entries()) {
+    target.set(key, value);
+  }
+  return target;
 }
 
 function resolveLogicManifestPath(manifestPathInput) {
@@ -520,6 +601,10 @@ function freezeContext(context = {}) {
     parent: context.parent ?? null,
     requestedVersion: context.requestedVersion ?? null,
   });
+}
+
+function isPlainObject(value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
 function normalizeStringArray(value) {

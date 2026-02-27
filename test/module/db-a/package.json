@@ -1,0 +1,8 @@
+{
+  "name": "@logic-auto/sample-db-a",
+  "version": "1.0.0",
+  "description": "Sample database module that exposes onboarding progress queries.",
+  "type": "module",
+  "main": "index.js",
+  "license": "MIT"
+}

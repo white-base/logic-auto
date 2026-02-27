@@ -1,0 +1,31 @@
+{
+  "packageName": "@logic-auto/sample-db-a",
+  "version": "1.0.0",
+  "category": "db.onboarding",
+  "kind": "module",
+  "layer": "db",
+  "dbType": "core",
+  "tags": ["sample", "sql", "onboarding"],
+  "uiDeps": {},
+  "dbDepsMap": {},
+  "contracts": {
+    "expects": [
+      {
+        "key": "connection",
+        "channel": "config",
+        "description": "Connection details or pool for the onboarding database"
+      }
+    ],
+    "provides": [
+      {
+        "key": "onboarding-progress",
+        "channel": "query",
+        "description": "Kysely builder that returns checklist progress per account"
+      }
+    ]
+  },
+  "businessDomain": "success",
+  "platform": "sql",
+  "structure": "sql-context",
+  "implementation": "./index.js"
+}
