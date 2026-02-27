@@ -1,0 +1,11 @@
+{
+  "name": "@logic-auto/sample-d",
+  "version": "1.0.0",
+  "description": "Sample module that highlights Sample C onboarding steps.",
+  "type": "module",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@logic-auto/sample-c": "file:../c"
+  }
+}

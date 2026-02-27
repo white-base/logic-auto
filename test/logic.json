@@ -10,7 +10,8 @@
     "@logic-auto/sample-a": "1.0.0",
     "@logic-auto/sample-b": "1.0.0",
     "@logic-auto/sample-c": "1.0.0",
-    "@logic-auto/sample-a-alt": "1.0.0"
+    "@logic-auto/sample-a-alt": "1.0.0",
+    "@logic-auto/sample-d": "1.0.0"
   },
   "dbDepsMap": {},
   "contracts": {

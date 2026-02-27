@@ -1,44 +1,18 @@
 import express from 'express';
 
-export function createUIModule(options = {}) {
-  const {
-    slug,
-    title,
-    description,
-    view = slug,
-    model = () => ({}),
-  } = options;
-
-  if (!slug) {
-    throw new Error('createUIModule requires a slug.');
+export function createModuleRouterFactory(moduleDefinition = {}) {
+  if (!moduleDefinition || typeof moduleDefinition !== 'object') {
+    throw new Error('createModuleRouterFactory requires a module definition.');
   }
-
-  const routePath = `/modules/${slug}`;
-  const meta = { slug, routePath, viewName: view, title, description };
-
-  const buildRouter = (manifest) => {
-    const router = express.Router();
-    // router는 app.use('/modules', router) 형태로 마운트된다고 가정하며,
-    // 각 모듈은 /modules/<slug> 경로를 자체적으로 등록한다.
-    router.get(`/${slug}`, async (req, res, next) => {
-      try {
-        const manifestJSON = manifestToJSON(manifest);
-        const additions = await Promise.resolve(model({ req, manifest, manifestJSON }));
-        res.render(view, {
-          title,
-          description,
-          routePath,
-          manifest: manifestJSON,
-          ...(additions ?? {}),
-        });
-      } catch (error) {
-        next(error);
-      }
-    });
-    return router;
+  const meta = buildModuleMeta(moduleDefinition);
+  return {
+    meta,
+    createRouter(manifest) {
+      const router = express.Router();
+      registerBaseModuleRoute({ router, manifest, moduleDefinition, meta });
+      return router;
+    },
   };
-
-  return { meta, buildRouter };
 }
 
 export function manifestToJSON(manifest) {
@@ -51,4 +25,56 @@ export function manifestToJSON(manifest) {
 export function toRouteSlug(packageName = '') {
   const raw = packageName.includes('/') ? packageName.split('/').pop() : packageName;
   return raw.replace(/[^0-9a-z-]+/gi, '-').toLowerCase();
+}
+
+function buildModuleMeta(definition = {}) {
+  const { slug, title, description } = definition;
+  if (!slug) {
+    throw new Error('moduleDefinition.slug is required.');
+  }
+  const viewName = definition.view ?? slug;
+  return {
+    slug,
+    routePath: `/modules/${slug}`,
+    viewName,
+    title,
+    description,
+  };
+}
+
+function registerBaseModuleRoute({
+  router,
+  manifest,
+  moduleDefinition,
+  meta,
+}) {
+  if (!router) {
+    throw new Error('registerBaseModuleRoute requires an Express router instance.');
+  }
+  if (!moduleDefinition) {
+    throw new Error('registerBaseModuleRoute requires a moduleDefinition.');
+  }
+  const handlerModel =
+    typeof moduleDefinition.model === 'function'
+      ? moduleDefinition.model
+      : () => ({});
+  const viewName = meta?.viewName ?? moduleDefinition.view ?? moduleDefinition.slug;
+  const routeSlug = meta?.slug ?? moduleDefinition.slug;
+  const routePath = `/${routeSlug}`;
+
+  router.get(routePath, async (req, res, next) => {
+    try {
+      const manifestJSON = manifestToJSON(manifest);
+      const additions = await Promise.resolve(handlerModel({ req, manifest, manifestJSON }));
+      res.render(viewName, {
+        title: meta?.title ?? moduleDefinition.title,
+        description: meta?.description ?? moduleDefinition.description,
+        routePath: meta?.routePath ?? `/modules/${routeSlug}`,
+        manifest: manifestJSON,
+        ...(additions ?? {}),
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
 }

@@ -1,1 +1,2 @@
-export * from './controller.js';
+export * from './router.js';
+export { moduleDefinition } from './controller.js';

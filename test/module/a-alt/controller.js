@@ -1,5 +1,5 @@
 import { marked } from 'marked';
-import { createUIModule, toRouteSlug } from '../../lib/ui-module.js';
+import { toRouteSlug } from '../../lib/ui-module.js';
 
 const moduleTitle = 'Sample Module A-alt — Dependency Cards';
 const moduleDescription =
@@ -10,7 +10,7 @@ const markdownSource = `# Dependency Showcase
 This module demonstrates how a LogicManifest-powered UI component can consume its \`uiDeps\`
 collection, hydrate dependency manifests, and surface their metadata inside a single EJS view.`;
 
-const { buildRouter, meta } = createUIModule({
+export const moduleDefinition = {
   slug: 'sample-a-alt',
   title: moduleTitle,
   description: moduleDescription,
@@ -18,7 +18,7 @@ const { buildRouter, meta } = createUIModule({
     html: marked.parse(markdownSource),
     dependencyCards: await collectDependencyCards(manifest),
   }),
-});
+};
 
 async function collectDependencyCards(lm) {
   const cards = [];
@@ -47,6 +47,3 @@ async function collectDependencyCards(lm) {
   }
   return cards;
 }
-
-export const createRouter = (manifest) => buildRouter(manifest);
-export { meta };

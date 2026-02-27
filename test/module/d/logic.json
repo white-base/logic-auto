@@ -1,0 +1,27 @@
+{
+  "packageName": "@logic-auto/sample-d",
+  "version": "1.0.0",
+  "category": "ui.summary",
+  "kind": "module",
+  "layer": "ui",
+  "tags": ["sample", "checklist", "summary"],
+  "uiDeps": {
+    "@logic-auto/sample-c": "1.0.0"
+  },
+  "dbDepsMap": {},
+  "contracts": {
+    "expects": [],
+    "provides": [
+      {
+        "key": "checklist-highlights",
+        "channel": "route",
+        "description": "GET /modules/sample-d with Sample C highlights"
+      }
+    ]
+  },
+  "businessDomain": "success",
+  "implementation": "./index.js",
+  "renderMode": "ssr",
+  "family": "sample-ui",
+  "theme": "neutral"
+}

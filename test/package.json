@@ -7,6 +7,7 @@
     "@logic-auto/sample-a": "file:./module/a",
     "@logic-auto/sample-b": "file:./module/b",
     "@logic-auto/sample-c": "file:./module/c",
-    "@logic-auto/sample-a-alt": "file:./module/a-alt"
+    "@logic-auto/sample-a-alt": "file:./module/a-alt",
+    "@logic-auto/sample-d": "file:./module/d"
   }
 }

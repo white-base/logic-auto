@@ -1,10 +1,14 @@
 import { access, readFile } from 'node:fs/promises';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 
 const esmRequire = createRequire(import.meta.url);
+
+const LOGIC_JSON_FILENAME = 'logic.json';
+const manifestInstancesByPackage = new Map();
+const manifestInstancesByPath = new Map();
 
 const KIND_VALUES = new Set(['module', 'bundle']);
 const LAYER_VALUES = new Set(['ui', 'db']);
@@ -86,6 +90,68 @@ export class LogicManifest {
 
   get parent() {
     return this._context.parent;
+  }
+
+  static getInstance(manifestPathInput) {
+    const rawInput =
+      typeof manifestPathInput === 'string' ? manifestPathInput.trim() : '';
+    const hasInput = rawInput.length > 0;
+    const resolvedPath = hasInput
+      ? resolveLogicManifestPath(rawInput)
+      : findLogicManifestInAncestors();
+
+    if (!resolvedPath) {
+      throw new LogicManifestError('Unable to locate a logic.json file.', {
+        code: 'MANIFEST_NOT_FOUND',
+      });
+    }
+
+    const normalizedPath = path.resolve(resolvedPath);
+    const cachedByPath = manifestInstancesByPath.get(normalizedPath);
+    if (cachedByPath) {
+      return cachedByPath;
+    }
+
+    if (!existsSync(normalizedPath)) {
+      throw new LogicManifestError(`logic.json not found at ${normalizedPath}`, {
+        code: 'MANIFEST_FILE_NOT_FOUND',
+      });
+    }
+
+    let definition;
+    try {
+      const contents = readFileSync(normalizedPath, 'utf8');
+      definition = JSON.parse(contents);
+    } catch (error) {
+      throw new LogicManifestError(`Failed to load manifest at ${normalizedPath}`, {
+        code: 'MANIFEST_FILE_READ_FAILED',
+        cause: error,
+      });
+    }
+
+    const packageName = typeof definition?.packageName === 'string' ? definition.packageName : null;
+    if (packageName && manifestInstancesByPackage.has(packageName)) {
+      const cachedByPackage = manifestInstancesByPackage.get(packageName);
+      manifestInstancesByPath.set(normalizedPath, cachedByPackage);
+      return cachedByPackage;
+    }
+
+    const manifest = new LogicManifest(definition, {
+      baseDir: path.dirname(normalizedPath),
+      manifestPath: normalizedPath,
+      lineage: [],
+      parent: null,
+    });
+
+    manifestInstancesByPath.set(normalizedPath, manifest);
+    if (manifest.packageName) {
+      manifestInstancesByPackage.set(manifest.packageName, manifest);
+    }
+    if (!LogicManifest.entry) {
+      LogicManifest.entry = manifest;
+    }
+
+    return manifest;
   }
 
   findManifest(packageName) {
@@ -343,6 +409,8 @@ export class LogicManifest {
   }
 }
 
+LogicManifest.entry = null;
+
 export class ManifestLoader {
   constructor(options = {}) {
     this.cwd = options.cwd ? path.resolve(options.cwd) : process.cwd();
@@ -403,6 +471,40 @@ export async function loadManifest(options = {}) {
   }
 
   return sharedLoader.load(false);
+}
+
+function resolveLogicManifestPath(manifestPathInput) {
+  if (typeof manifestPathInput !== 'string' || manifestPathInput.length === 0) {
+    return null;
+  }
+  const absoluteInput = path.resolve(manifestPathInput);
+  try {
+    const stats = statSync(absoluteInput);
+    if (stats.isDirectory()) {
+      return path.join(absoluteInput, LOGIC_JSON_FILENAME);
+    }
+    return absoluteInput;
+  } catch (error) {
+    if (absoluteInput.endsWith('.json')) {
+      return absoluteInput;
+    }
+    return path.join(absoluteInput, LOGIC_JSON_FILENAME);
+  }
+}
+
+function findLogicManifestInAncestors(startDir = process.cwd()) {
+  let currentDir = path.resolve(startDir);
+  while (true) {
+    const candidate = path.join(currentDir, LOGIC_JSON_FILENAME);
+    if (existsSync(candidate)) {
+      return candidate;
+    }
+    const parentDir = path.dirname(currentDir);
+    if (parentDir === currentDir) {
+      return null;
+    }
+    currentDir = parentDir;
+  }
 }
 
 function freezeContext(context = {}) {

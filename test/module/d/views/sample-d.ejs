@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= title %></title>
+    <style>
+      body { font-family: 'Segoe UI', sans-serif; margin: 2rem; background: #f6fff8; color: #102a43; }
+      header { border-left: 4px solid #2ec4b6; padding-left: 1rem; margin-bottom: 1.5rem; }
+      .summary { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1.5rem; }
+      .card { background: #ffffff; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.08); padding: 1rem 1.5rem; min-width: 220px; }
+      ol { padding-left: 1.25rem; }
+      .cta { margin-top: 2rem; }
+      .cta a { display: inline-block; padding: 0.65rem 1.5rem; background: #2ec4b6; color: #fff; border-radius: 999px; text-decoration: none; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <p><strong><%= title %></strong></p>
+      <p><%= description %></p>
+      <p><em><%= headline %></em></p>
+      <p><%= teaser %></p>
+    </header>
+
+    <section class="summary">
+      <div class="card">
+        <p><strong>Total Steps</strong></p>
+        <p style="font-size: 2.5rem; margin: 0;"><%= dependency.totalSteps %></p>
+      </div>
+      <div class="card">
+        <p><strong>First Step</strong></p>
+        <p><%= dependency.firstStep || 'Define your first milestone in Module C' %></p>
+      </div>
+      <div class="card">
+        <p><strong>Linked Module</strong></p>
+        <p><%= dependency.title %></p>
+        <small><%= dependency.description %></small>
+      </div>
+    </section>
+
+    <section>
+      <h2>Onboarding Checklist</h2>
+      <ol>
+        <% (dependency.steps || []).forEach(function(step) { %>
+          <li><%= step %></li>
+        <% }) %>
+      </ol>
+    </section>
+
+    <section class="cta">
+      <a href="<%= dependency.routePath %>">View Sample Module C</a>
+    </section>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= title %></title>
+    <style>
+      body { font-family: 'Inter', system-ui, sans-serif; margin: 2rem; background: #f4f8fb; color: #102a43; }
+      header { margin-bottom: 1.5rem; }
+      header p { margin: 0.25rem 0; }
+      form { background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 12px 24px rgba(15,23,42,.08); }
+      label { display: block; font-weight: 600; margin-bottom: 0.35rem; }
+      input { width: 100%; padding: 0.6rem 0.8rem; margin-bottom: 1rem; border-radius: 8px; border: 1px solid #cbd5f5; }
+      .note { margin-top: 1rem; font-size: 0.9rem; color: #486581; }
+      .tags span { background: #d9f2ff; color: #035388; border-radius: 999px; padding: 0.15rem 0.5rem; margin-right: 0.35rem; font-size: 0.8rem; }
+      button { background: #0f172a; color: #fff; border: none; padding: 0.75rem 1.5rem; border-radius: 999px; font-size: 1rem; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <p><small>Route: <code><%= routePath %></code></small></p>
+      <h1><%= formHeading %></h1>
+      <p><%= description %></p>
+    </header>
+
+    <section>
+      <h2>Current Manifest Tags</h2>
+      <div class="tags">
+        <% (manifestSummary.tags || []).forEach(function(tag){ %>
+          <span><%= tag %></span>
+        <% }) %>
+      </div>
+    </section>
+
+    <section>
+      <h2>Hero Banner Inputs</h2>
+      <form method="post" action="<%= routePath %>">
+        <% fields.forEach(function(field){ %>
+          <label for="field-<%= field.name %>"><%= field.label %></label>
+          <input
+            id="field-<%= field.name %>"
+            type="<%= field.type %>"
+            name="<%= field.name %>"
+            placeholder="<%= field.placeholder %>"
+            value="<%= defaults[field.name] || '' %>"
+          />
+        <% }) %>
+        <button type="button">Preview Banner</button>
+        <p class="note"><%= submissionNote %></p>
+        <!-- TODO: replace button handler + wire POST submission when backend route is ready -->
+      </form>
+    </section>
+  </body>
+</html>
